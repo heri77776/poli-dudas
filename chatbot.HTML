@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat bot escolar </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #720000;
+        }
+        #chatbox {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #user-input {
+            width: calc(100% - 90px);
+            max-width: 500px;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .user-message {
+            background-color: #e1f5fe;
+            text-align: right;
+        }
+        .bot-message {
+            background-color: #e8eaf6;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chatbot escolar <h1>
+    <div id="chatbox"></div>
+    <div style="display: flex; width: calc(100% - 20px); max-width: 600px;">
+        <input type="text" id="user-input" placeholder="Escribe tu mensaje aquí...">
+        <button onclick="sendMessage()">Enviar</button>
+    </div>
+
+    <script>
+        const chatbox = document.getElementById('chatbox');
+        const userInput = document.getElementById('user-input');
+
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message) {
+                appendMessage(message, 'user-message');
+                userInput.value = '';
+                const response = getBotResponse(message);
+                setTimeout(() => {
+                    appendMessage(response, 'bot-message');
+                    chatbox.scrollTop = chatbox.scrollHeight; // Desplazar al final
+                }, 500); // Retraso para simular pensamiento
+            }
+        }
+
+        function appendMessage(message, className) {
+            const div = document.createElement('div');
+            div.textContent = message;
+            div.className = 'message ${className}';
+            chatbox.appendChild(div);
+        }
+
+        function getBotResponse(message) {
+            const lowerCaseMessage = message.toLowerCase();
+            if (lowerCaseMessage.includes('hola')) {
+                return '¡Hola! ¿Cómo puedo asistirte hoy?';
+            } else if (lowerCaseMessage.includes('adios')) {
+                return '¡Hasta luego! Si necesitas ayuda, aqui estare.';
+            } else if (lowerCaseMessage.includes('como estas')) {
+                return 'Estoy bien, gracias. ¿Y tú cómo estás?';
+            } else if (lowerCaseMessage.includes('gracias')) {
+                return '¡De nada! Si tienes más preguntas, no dudes en preguntar.';
+            } else if (lowerCaseMessage.includes('que puedes hacer')) {
+                return 'Puedo responder a preguntas, ofrecer información general, y mantener una conversación básica. ¿Qué te gustaría saber?';
+            } else if (lowerCaseMessage.includes('cuentame un chiste')) {
+                return 'Claro, ¿por qué los pájaros no usan Facebook? Porque ya tienen Twitter.';
+            } else if (lowerCaseMessage.includes('dime una noticia')) {
+                return 'Lo siento, no tengo acceso a noticias en tiempo real, pero puedo ofrecerte información general sobre muchos temas. ¿Sobre qué te gustaría saber más?';
+            } else if (lowerCaseMessage.includes('cómo está el clima')) {
+                return 'No puedo proporcionar el clima actual, pero puedo ofrecerte consejos generales sobre cómo prepararte para diferentes condiciones climáticas. ¿Te gustaría eso?';
+            } else if (lowerCaseMessage.includes('qué es tu nombre')) {
+                return 'Soy un chatbot sin nombre específico, pero puedes llamarme Chatbot. ¿Cómo puedo ayudarte?';
+            } else if (lowerCaseMessage.includes('cuál es la capital de')) {
+                const city = message.split(' ').slice(-1)[0];
+                return 'La capital de ${city} es una excelente pregunta, pero necesitaría que me digas el país para darte una respuesta precisa.';
+            } else if (lowerCaseMessage.includes('cuál es la hora')) {
+                return 'La hora actual es ${new Date().toLocaleTimeString()}.';
+            } else if (lowerCaseMessage.includes('qué día es hoy')) {
+                return 'Hoy es ${new Date().toLocaleDateString()}.';
+            } else if (lowerCaseMessage.includes('cuánto es')) {
+                const [ , num1, op, num2] = message.match(/cuánto es (\d+) (.+) (\d+)/) || [];
+                if (num1 && op && num2) {
+                    const result = 'eval(${num1} ${op} ${num2})';
+                    return 'El resultado de ${num1} ${op} ${num2} es ${result}.';
+                }
+                return 'No puedo realizar ese cálculo. Por favor, usa el formato "cuánto es [número] [operador] [número]"';
+            } else if (lowerCaseMessage.includes('recomiéndame un libro')) {
+                return 'Te recomiendo "Cien años de soledad" de Gabriel García Márquez. Es una obra maestra de la literatura. ¿Te gustaría una recomendación diferente?';
+            } else if (lowerCaseMessage.includes('dame un consejo')) {
+                return 'Un buen consejo es siempre mantener una actitud positiva y aprender algo nuevo cada día. ¿Hay algo específico sobre lo que necesitas consejo?';
+            } else if (lowerCaseMessage.includes('dónde estás')) {
+                return 'Estoy en la nube, accesible desde cualquier lugar con internet. ¿Cómo puedo ayudarte?';
+            } else if (lowerCaseMessage.includes('cuál es el significado de la vida')) {
+                return 'Esa es una pregunta profunda. Algunos dicen que el significado de la vida es encontrar la felicidad y cumplir tus sueños. ¿Tienes alguna otra pregunta?';
+            } else {
+                return 'No estoy seguro de cómo responder a eso. ¿Podrías reformular tu pregunta o pedir algo diferente?';
+            }
+        }
+    </script>
+</body>
+</html>
